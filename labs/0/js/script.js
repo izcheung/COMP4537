@@ -19,6 +19,7 @@ class MemoryGame {
   }
 
   reset() {
+    // ChatGPT was used to help me debug why at the start of a new game if was not waiting the full n seconds
     if (this.intervalId) {
       clearInterval(this.intervalId);
       this.intervalId = null;
