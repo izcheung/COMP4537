@@ -4,11 +4,13 @@ class MemoryGame {
   constructor() {
     this.input = new Input();
     this.gameArea = new GameArea();
+    this.intervalId = null;
+    this.timeoutId = null;
   }
 
   run() {
     this.input.submitButton.addEventListener("click", (e) => {
-      this.gameArea.reset();
+      this.reset();
       const inputValue = this.input.getInputValue();
       if (this.input.validateInput(inputValue)) {
         this.start(Number(inputValue));
@@ -16,7 +18,21 @@ class MemoryGame {
     });
   }
 
+  reset() {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+      this.intervalId = null;
+    }
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId);
+      this.timeoutId = null;
+    }
+    this.gameArea.reset();
+  }
+
   start(inputValue) {
+    const timeBeforeFirstScramble = inputValue * 1000;
+    const timeBetweenScramble = 2000;
     Button.availableColors = [...Button.allColors];
     this.currentClick = 0;
     this.gameArea.createButtons(inputValue, (clickedButton) =>
@@ -24,17 +40,18 @@ class MemoryGame {
     );
     this.gameArea.renderButtons();
     let count = 0;
-    setTimeout(() => {
-      const interval = setInterval(() => {
+    this.timeoutId = setTimeout(() => {
+      this.intervalId = setInterval(() => {
         this.gameArea.scrambleButtons();
         count += 1;
         if (count == inputValue) {
-          clearInterval(interval);
+          clearInterval(this.intervalId);
+          this.intervalId = null;
           this.gameArea.buttons.forEach((btn) => btn.hideText());
           this.gameArea.buttons.forEach((btn) => btn.enable());
         }
-      }, 2000);
-    }, inputValue * 1000);
+      }, timeBetweenScramble);
+    }, timeBeforeFirstScramble);
   }
 
   checkClick(clickedButton) {
