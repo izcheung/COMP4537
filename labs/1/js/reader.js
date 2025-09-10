@@ -14,6 +14,10 @@ class ReaderTextAreaManager {
     this.container.appendChild(wrapper);
   }
 
+  clearSection() {
+    this.container.innerHTML = "";
+  }
+
   addTimeStamp(time) {
     const timeStamp = document.querySelector("#timestamp");
     timeStamp.textContent = `${MESSAGES.readTimeStamp} ${time}`;
@@ -32,14 +36,14 @@ class ReadLocalStorage {
   }
 
   readAll() {
+    this.readerTextAreaManager.clearSection();
     const notesJSON = localStorage.getItem("notes");
     const notes = JSON.parse(notesJSON || "[]");
+
     notes.forEach((note) => {
-      if (!this.existingNotes.has(note.id)) {
-        this.readerTextAreaManager.addElement(note.content);
-        this.existingNotes.add(note.id);
-      }
+      this.readerTextAreaManager.addElement(note.content);
     });
+
     const timeNow = new Date().toLocaleTimeString("en-US", {
       hour12: true,
     });
