@@ -16,6 +16,8 @@ class WriteTextAreaManager {
     const newTextInput = document.createElement("textarea");
     newTextInput.id = `textarea-${this.idCounter++}`;
 
+    newTextInput.addEventListener("input", () => this.updateAddButtonState());
+
     const newDeleteButton = document.createElement("button");
     newDeleteButton.textContent = "Delete";
     newDeleteButton.addEventListener("click", () => {
