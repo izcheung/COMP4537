@@ -1,10 +1,11 @@
-import { Navigation } from "./common.js";
+import { Navigation, Note } from "./common.js";
 import { MESSAGES } from "../lang/messages/en/user.js";
 
 class WriteTextAreaManager {
   constructor() {
     this.container = document.querySelector("section");
     this.idCounter = 0;
+    this.notes = [];
 
     this.addButton = document.querySelector("#add-button");
     this.addButton.addEventListener("click", () => this.addElement());
@@ -12,28 +13,22 @@ class WriteTextAreaManager {
   }
 
   addElement() {
-    const wrapper = document.createElement("div");
-    const newTextInput = document.createElement("textarea");
-    newTextInput.id = `textarea-${this.idCounter++}`;
+    const noteId = `textarea-${this.idCounter++}`;
+    const note = new Note(noteId, "", (noteToDelete) =>
+      this.deleteElement(noteToDelete)
+    );
 
-    newTextInput.addEventListener("input", () => this.updateAddButtonState());
+    // Add input event listener to update add button state
+    note.addEventListener("input", () => this.updateAddButtonState());
 
-    const newDeleteButton = document.createElement("button");
-    newDeleteButton.textContent = "Delete";
-    newDeleteButton.addEventListener("click", () => {
-      this.deleteElement(wrapper);
-    });
-    wrapper.appendChild(newTextInput);
-    wrapper.appendChild(newDeleteButton);
-    this.container.appendChild(wrapper);
+    this.notes.push(note);
+    this.container.appendChild(note.getElement());
     this.updateAddButtonState();
   }
 
-  deleteElement(wrapper) {
-    const notes = JSON.parse(localStorage.getItem("notes"));
-    const textArea = wrapper.querySelector("textarea");
-
-    const newNotes = notes.filter((note) => note.id !== textArea.id);
+  deleteElement(noteToDelete) {
+    const notes = JSON.parse(localStorage.getItem("notes") || "[]");
+    const newNotes = notes.filter((note) => note.id !== noteToDelete.id);
 
     const timeNow = new Date().toLocaleTimeString("en-US", {
       hour12: true,
@@ -42,7 +37,11 @@ class WriteTextAreaManager {
 
     localStorage.setItem("notes", JSON.stringify(newNotes));
 
-    wrapper.remove();
+    // Remove from notes array
+    this.notes = this.notes.filter((note) => note.id !== noteToDelete.id);
+
+    // Remove from DOM
+    noteToDelete.remove();
     this.updateAddButtonState();
   }
 
@@ -52,13 +51,16 @@ class WriteTextAreaManager {
   }
 
   updateAddButtonState() {
-    const textAreas = this.container.querySelectorAll("textarea");
-    if (textAreas.length === 0) {
+    if (this.notes.length === 0) {
       this.addButton.disabled = false;
       return;
     }
-    const lastTextArea = textAreas[textAreas.length - 1];
-    this.addButton.disabled = lastTextArea.value.trim() === "";
+    const lastNote = this.notes[this.notes.length - 1];
+    this.addButton.disabled = lastNote.getValue().trim() === "";
+  }
+
+  getAllNotes() {
+    return this.notes;
   }
 }
 
@@ -73,13 +75,11 @@ class SaveLocalStorage {
   }
 
   saveAll() {
-    const textAreas = document.querySelectorAll("textarea");
-    const notes = Array.from(textAreas)
-      .filter((textArea) => textArea)
-      .map((textArea) => ({
-        id: textArea.id,
-        content: textArea.value,
-      }));
+    const notes = this.writerTextAreaManager
+      .getAllNotes()
+      .filter((note) => note)
+      .map((note) => note.toJSON());
+
     const timeNow = new Date().toLocaleTimeString("en-US", {
       hour12: true,
     });

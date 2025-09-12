@@ -1,21 +1,21 @@
-import { Navigation } from "./common.js";
+import { Navigation, Note } from "./common.js";
 import { MESSAGES } from "../lang/messages/en/user.js";
 
 class ReaderTextAreaManager {
   constructor() {
     this.container = document.querySelector("section");
+    this.notes = [];
   }
 
-  addElement(text) {
-    const wrapper = document.createElement("div");
-    const newTextInput = document.createElement("textarea");
-    newTextInput.value = text;
-    wrapper.appendChild(newTextInput);
-    this.container.appendChild(wrapper);
+  addElement(noteData) {
+    const note = new Note(noteData.id, noteData.content);
+    this.notes.push(note);
+    this.container.appendChild(note.getElement());
   }
 
   clearSection() {
     this.container.innerHTML = "";
+    this.notes = [];
   }
 
   addTimeStamp(time) {
@@ -40,8 +40,8 @@ class ReadLocalStorage {
     const notesJSON = localStorage.getItem("notes");
     const notes = JSON.parse(notesJSON || "[]");
 
-    notes.forEach((note) => {
-      this.readerTextAreaManager.addElement(note.content);
+    notes.forEach((noteData) => {
+      this.readerTextAreaManager.addElement(noteData);
     });
 
     const timeNow = new Date().toLocaleTimeString("en-US", {
