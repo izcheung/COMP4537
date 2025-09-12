@@ -8,6 +8,7 @@ class WriteTextAreaManager {
     this.notes = [];
 
     this.addButton = document.querySelector("#add-button");
+    this.addButton.textContent = MESSAGES.addButtonText;
     this.addButton.addEventListener("click", () => this.addElement());
     this.updateAddButtonState();
   }
@@ -18,7 +19,6 @@ class WriteTextAreaManager {
       this.deleteElement(noteToDelete)
     );
 
-    // Add input event listener to update add button state
     note.addEventListener("input", () => this.updateAddButtonState());
 
     this.notes.push(note);
@@ -37,10 +37,8 @@ class WriteTextAreaManager {
 
     localStorage.setItem("notes", JSON.stringify(newNotes));
 
-    // Remove from notes array
     this.notes = this.notes.filter((note) => note.id !== noteToDelete.id);
 
-    // Remove from DOM
     noteToDelete.remove();
     this.updateAddButtonState();
   }

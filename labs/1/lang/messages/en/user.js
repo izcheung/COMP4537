@@ -5,4 +5,7 @@ export const MESSAGES = {
   writerLink: "WRITER",
   writeTimeStamp: "stored at",
   readTimeStamp: "updated at",
+  deleteButtonText: "Delete",
+  addButtonText: "Add",
+  backButtonText: "Back"
 };

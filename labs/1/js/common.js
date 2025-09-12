@@ -2,6 +2,7 @@ import { MESSAGES } from "../lang/messages/en/user.js";
 export class Navigation {
   constructor() {
     const backButton = document.querySelector(".back-button");
+    backButton.textContent = MESSAGES.backButtonText;
     if (backButton) {
       backButton.addEventListener("click", () => {
         window.location.href = "index.html";
