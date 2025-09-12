@@ -2,3 +2,18 @@
     display: flex;
     justify-content: flex-end;
 }
+
+textarea {
+    background-color: blue;
+    color: white
+}
+
+#add-button {
+    background-color: green;
+    color: white
+}
+
+.delete-button {
+    background-color: orange;
+    color: white
+}
