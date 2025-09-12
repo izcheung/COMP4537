@@ -1,6 +1,7 @@
+import { MESSAGES } from "../lang/messages/en/user.js";
 export class Navigation {
   constructor() {
-    const backButton = document.querySelector("#back-button");
+    const backButton = document.querySelector(".back-button");
     if (backButton) {
       backButton.addEventListener("click", () => {
         window.location.href = "index.html";
@@ -29,7 +30,8 @@ export class Note {
 
     if (this.onDelete) {
       this.deleteButton = document.createElement("button");
-      this.deleteButton.textContent = "Delete";
+      this.deleteButton.classList.add("delete-button");
+      this.deleteButton.textContent = MESSAGES.deleteButtonText;
       this.deleteButton.addEventListener("click", () => {
         this.onDelete(this);
       });
