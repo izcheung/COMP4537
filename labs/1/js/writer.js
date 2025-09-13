@@ -15,7 +15,7 @@ class WriteTextAreaManager {
 
   addElement(noteData = null) {
     let noteId, content;
-
+    // Ai used here to debug why my writer.html was not prepopulating with data in localStorage
     if (noteData) {
       noteId = noteData.id;
       content = noteData.content;
