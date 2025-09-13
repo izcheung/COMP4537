@@ -13,9 +13,23 @@ class WriteTextAreaManager {
     this.updateAddButtonState();
   }
 
-  addElement() {
-    const noteId = `textarea-${this.idCounter++}`;
-    const note = new Note(noteId, "", (noteToDelete) =>
+  addElement(noteData = null) {
+    let noteId, content;
+
+    if (noteData) {
+      noteId = noteData.id;
+      content = noteData.content;
+
+      const idNumber = parseInt(noteId.replace("textarea-", ""));
+      if (idNumber >= this.idCounter) {
+        this.idCounter = idNumber + 1;
+      }
+    } else {
+      noteId = `textarea-${this.idCounter++}`;
+      content = "";
+    }
+
+    const note = new Note(noteId, content, (noteToDelete) =>
       this.deleteElement(noteToDelete)
     );
 
@@ -24,6 +38,11 @@ class WriteTextAreaManager {
     this.notes.push(note);
     this.container.appendChild(note.getElement());
     this.updateAddButtonState();
+  }
+
+  clearSection() {
+    this.container.innerHTML = "";
+    this.notes = [];
   }
 
   deleteElement(noteToDelete) {
@@ -66,6 +85,7 @@ class SaveLocalStorage {
   constructor(writerTextAreaManager) {
     this.intervalId = null;
     this.writerTextAreaManager = writerTextAreaManager;
+    this.readAll();
   }
 
   start(interval = 2000) {
@@ -85,6 +105,16 @@ class SaveLocalStorage {
     localStorage.setItem("notes", JSON.stringify(notes));
   }
 
+  readAll() {
+    this.writerTextAreaManager.clearSection();
+    const notesJSON = localStorage.getItem("notes");
+    const notes = JSON.parse(notesJSON || "[]");
+
+    notes.forEach((noteData) => {
+      this.writerTextAreaManager.addElement(noteData);
+    });
+  }
+
   stop() {
     clearInterval(this.intervalId);
   }
@@ -93,6 +123,7 @@ class SaveLocalStorage {
 class WriterApp {
   constructor() {
     const writerTextAreaManager = new WriteTextAreaManager();
+
     this.saveLocalStorage = new SaveLocalStorage(writerTextAreaManager);
     this.backButton = new Navigation();
   }
