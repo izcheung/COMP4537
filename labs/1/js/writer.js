@@ -73,7 +73,7 @@ class WriteTextAreaManager {
       return;
     }
     const lastNote = this.notes[this.notes.length - 1];
-    this.addButton.disabled = lastNote.getValue().trim() === "";
+    this.addButton.disabled = lastNote.getValue() === "";
   }
 
   getAllNotes() {
