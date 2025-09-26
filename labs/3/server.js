@@ -2,7 +2,7 @@ const http = require("http");
 const url = require("url");
 const DateUtils = require("./modules/utils");
 const FileHandler = require("./modules/filehandler");
-
+const { wrongPath, notFound } = require("./lang/en/en");
 class Server {
   constructor(port = 8000) {
     this.port = port;
@@ -32,7 +32,7 @@ class Server {
       this.handleWriteFile(res, "file.txt", qdata.text);
     } else {
       res.writeHead(404, { "Content-Type": "text/html" });
-      res.end("404 Not Found");
+      res.end(wrongPath);
     }
   }
 
@@ -45,7 +45,8 @@ class Server {
     this.fileHandler.readFile(filename, (err, data) => {
       if (err) {
         res.writeHead(404, { "Content-Type": "text/html" });
-        return res.end(`${filename} 404 Not Found!`);
+        const notFoundMessage = notFound.replace("%1", filename);
+        return res.end(notFoundMessage);
       }
 
       res.writeHead(200, { "Content-Type": "text/html" });

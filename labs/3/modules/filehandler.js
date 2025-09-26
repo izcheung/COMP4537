@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-
+const { notFound, success, error } = require("../lang/en/en");
 class FileHandler {
   constructor(baseDir = "./files") {
     this.baseDir = baseDir;
@@ -11,9 +11,11 @@ class FileHandler {
 
     fs.appendFile(filepath, text + "\n", (err) => {
       if (err) {
-        callback(`Error appending to ${filename}`);
+        const errorMessage = error.replace("%1", filename);
+        callback(errorMessage);
       } else {
-        callback(null, `Text appended successfully to ${filename}`);
+        const successMessage = success.replace("%1", filename);
+        callback(null, successMessage);
       }
     });
   }
@@ -23,7 +25,8 @@ class FileHandler {
 
     fs.readFile(filepath, "utf8", (err, data) => {
       if (err) {
-        callback(`${filename} 404 Not Found`);
+        const notFoundMessage = notFound.replace("%1", filename);
+        callback(notFoundMessage);
       } else {
         callback(null, data);
       }
